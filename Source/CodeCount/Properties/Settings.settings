@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CodeCount.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="BaseDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\</Value>
+    </Setting>
+    <Setting Name="LayoutExtensions" Type="System.String" Scope="User">
+      <Value Profile="(Default)">aspx  ascx  htm</Value>
+    </Setting>
+    <Setting Name="CodeExtensions" Type="System.String" Scope="User">
+      <Value Profile="(Default)">cs  vb</Value>
+    </Setting>
+    <Setting Name="SkipPatterns" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.dbml.  .designer.  AssemblyInfo.</Value>
+    </Setting>
+    <Setting Name="ClientCodeExtensions" Type="System.String" Scope="User">
+      <Value Profile="(Default)">js</Value>
+    </Setting>
+    <Setting Name="CommentIndicators" Type="System.String" Scope="User">
+      <Value Profile="(Default)">&lt;!--  --&gt;  --  \\  /*  */</Value>
+    </Setting>
+    <Setting Name="SqlExtensions" Type="System.String" Scope="User">
+      <Value Profile="(Default)">sql</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
