@@ -36,7 +36,7 @@
 			this.txtLayoutExtensions = new System.Windows.Forms.TextBox();
 			this.btnCalculate = new System.Windows.Forms.Button();
 			this.label3 = new System.Windows.Forms.Label();
-			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.txtInstructions = new System.Windows.Forms.TextBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.txtClientCodeExtensions = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
@@ -124,18 +124,19 @@
 			this.label3.Text = "Layout extensions:";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// textBox1
+			// txtInstructions
 			// 
-			this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.txtInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.textBox1.Location = new System.Drawing.Point(141, 15);
-			this.textBox1.Multiline = true;
-			this.textBox1.Name = "textBox1";
-			this.textBox1.ReadOnly = true;
-			this.textBox1.Size = new System.Drawing.Size(412, 34);
-			this.textBox1.TabIndex = 24;
-			this.textBox1.Text = "This utility counts all lines in all files of a give solution directory.\r\nSpecify" +
+			this.txtInstructions.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.txtInstructions.Location = new System.Drawing.Point(141, 15);
+			this.txtInstructions.Multiline = true;
+			this.txtInstructions.Name = "txtInstructions";
+			this.txtInstructions.ReadOnly = true;
+			this.txtInstructions.Size = new System.Drawing.Size(412, 34);
+			this.txtInstructions.TabIndex = 24;
+			this.txtInstructions.TabStop = false;
+			this.txtInstructions.Text = "This utility counts all lines in all files of a give solution directory.\r\nSpecify" +
     " desired file extensions to be included in your count.";
 			// 
 			// label9
@@ -216,6 +217,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.txtResult.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.txtResult.ForeColor = System.Drawing.Color.Navy;
 			this.txtResult.Location = new System.Drawing.Point(141, 296);
 			this.txtResult.Multiline = true;
 			this.txtResult.Name = "txtResult";
@@ -238,7 +240,7 @@
 			this.Controls.Add(this.txtSqlExtensions);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.txtClientCodeExtensions);
-			this.Controls.Add(this.textBox1);
+			this.Controls.Add(this.txtInstructions);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.btnCalculate);
 			this.Controls.Add(this.txtLayoutExtensions);
@@ -267,7 +269,7 @@
         private System.Windows.Forms.TextBox txtLayoutExtensions;
         private System.Windows.Forms.Button btnCalculate;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtInstructions;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.TextBox txtClientCodeExtensions;
 		private System.Windows.Forms.Label label12;

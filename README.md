@@ -1,4 +1,5 @@
 # CodeCount
+![](Demo.png)
 
 ## Background
 Sometimes I am curious to compare code projects to compare the relative code size.
