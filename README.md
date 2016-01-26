@@ -9,6 +9,7 @@ Sometimes I am curious to compare code projects to compare the relative code siz
 - Specify extensions for all files to be included
 - Enter pattern for files to be excluded (from above extensions)
 - Enter pattern for comment lines
+- Copy result for future reference
 
 ## Installation
 - Download source
