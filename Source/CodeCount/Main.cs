@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using CodeCount.Entities;
 using CodeCount.Extenders;
@@ -47,9 +48,6 @@ namespace CodeCount
         {
             try
             {
-                Cursor = Cursors.WaitCursor;
-                txtResult.Text = string.Empty;
-                Application.DoEvents();
                 SaveSettings();
 
                 // Set counters
@@ -82,16 +80,12 @@ namespace CodeCount
                 sb.AppendLine("====================================================");
                 sb.AppendLine("TOTALT      {0,10:N0}{1,10:P0}", countTotal, 1D);
 
-                txtResult.Text = sb.ToString();
+                WriteResult(sb.ToString());
 
             }
             catch (Exception ex)
             {
-                txtResult.Text = ex.Message;
-            }
-            finally
-            {
-                Cursor = Cursors.Default;
+                MessageBox.Show(ex.Message, "Calculate", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -118,13 +112,19 @@ namespace CodeCount
             Settings.Default.Save();
         }
 
-        private static Dictionary<string, CountItem> CountFiles(Dictionary<string, CountItem> countItems, string[] skipPatterns, string[] commentIndicators)
+        private Dictionary<string, CountItem> CountFiles(Dictionary<string, CountItem> countItems, string[] skipPatterns, string[] commentIndicators)
         {
             var allHandledExtensions = countItems.Values.SelectMany(x => x.Extensions).ToList();
             var directoryInfo = new DirectoryInfo(Settings.Default.BaseDirectory);
             var fileInfos = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
+            var i = 0;
+            var fileCount = fileInfos.Count();
+
             foreach (var fileInfo in fileInfos)
             {
+                i += 1;
+                myBackgroundWorker.ReportProgress(i * 100 / fileCount, $"Processing file {i} of {fileCount}");
+
                 // Skip if path matches any pattern we want to avoid
                 if (skipPatterns.Any(s => fileInfo.FullName.Contains(s)))
                 {
@@ -157,6 +157,18 @@ namespace CodeCount
 
             return countItems;
         }
+        
+        private void WriteResult(string value)
+        {
+            if (txtResult.InvokeRequired)
+            {
+                txtResult.Invoke((ThreadStart)(() => WriteResult(value)));
+            }
+            else
+            {
+                txtResult.Text = value;
+            }
+        }
 
 
         #region Event Handlers
@@ -168,13 +180,33 @@ namespace CodeCount
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
+            Cursor = Cursors.WaitCursor;
+            txtResult.Text = string.Empty;
+            myProgressBar.Visible = true;
+            lblFeedback.Visible = true;
+            lblCopyTip.Visible = false;
+            myBackgroundWorker.RunWorkerAsync();
+        }
+
+        private void myBackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
             Calculate();
         }
 
+        private void myBackgroundWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            myProgressBar.Value = e.ProgressPercentage;
+            lblFeedback.Text = e.UserState.ToString();
+        }
+
+        private void myBackgroundWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            myProgressBar.Visible = false;
+            lblFeedback.Visible = false;
+            lblCopyTip.Visible = true;
+            Cursor = Cursors.Default;
+        }
 
         #endregion
-
-
-
     }
 }

@@ -36,7 +36,6 @@
             this.txtLayoutExtensions = new System.Windows.Forms.TextBox();
             this.btnCalculate = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtInstructions = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.txtClientCodeExtensions = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -46,7 +45,11 @@
             this.txtSqlExtensions = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.txtResult = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.myProgressBar = new System.Windows.Forms.ProgressBar();
+            this.lblInstructions = new System.Windows.Forms.Label();
+            this.lblCopyTip = new System.Windows.Forms.Label();
+            this.myBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.lblFeedback = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnDirectory
@@ -108,7 +111,7 @@
             // btnCalculate
             // 
             this.btnCalculate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCalculate.Location = new System.Drawing.Point(480, 253);
+            this.btnCalculate.Location = new System.Drawing.Point(480, 246);
             this.btnCalculate.Name = "btnCalculate";
             this.btnCalculate.Size = new System.Drawing.Size(73, 23);
             this.btnCalculate.TabIndex = 8;
@@ -124,21 +127,6 @@
             this.label3.TabIndex = 22;
             this.label3.Text = "Layout extensions:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtInstructions
-            // 
-            this.txtInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtInstructions.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtInstructions.Location = new System.Drawing.Point(141, 15);
-            this.txtInstructions.Multiline = true;
-            this.txtInstructions.Name = "txtInstructions";
-            this.txtInstructions.ReadOnly = true;
-            this.txtInstructions.Size = new System.Drawing.Size(412, 34);
-            this.txtInstructions.TabIndex = 24;
-            this.txtInstructions.TabStop = false;
-            this.txtInstructions.Text = "This utility counts all lines in all files of a given solution directory.\r\nSpecif" +
-    "y desired file extensions to be included in your count.";
             // 
             // label9
             // 
@@ -219,35 +207,70 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtResult.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtResult.ForeColor = System.Drawing.Color.Navy;
-            this.txtResult.Location = new System.Drawing.Point(141, 296);
+            this.txtResult.Location = new System.Drawing.Point(141, 297);
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResult.Size = new System.Drawing.Size(412, 158);
+            this.txtResult.Size = new System.Drawing.Size(412, 156);
             this.txtResult.TabIndex = 33;
             this.txtResult.WordWrap = false;
             // 
-            // textBox1
+            // myProgressBar
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox1.Location = new System.Drawing.Point(141, 460);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(412, 20);
-            this.textBox1.TabIndex = 34;
-            this.textBox1.TabStop = false;
-            this.textBox1.Text = "The result is displayed as plain text to make it easier to copy and reuse if need" +
+            this.myProgressBar.Location = new System.Drawing.Point(141, 246);
+            this.myProgressBar.Name = "myProgressBar";
+            this.myProgressBar.Size = new System.Drawing.Size(333, 23);
+            this.myProgressBar.TabIndex = 35;
+            this.myProgressBar.Visible = false;
+            // 
+            // lblInstructions
+            // 
+            this.lblInstructions.Location = new System.Drawing.Point(138, 15);
+            this.lblInstructions.Name = "lblInstructions";
+            this.lblInstructions.Size = new System.Drawing.Size(415, 31);
+            this.lblInstructions.TabIndex = 37;
+            this.lblInstructions.Text = "This utility counts all lines in all files of a given solution directory.\r\nSpecif" +
+    "y desired directory and file extensions to be included in your count.";
+            this.lblInstructions.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblCopyTip
+            // 
+            this.lblCopyTip.Location = new System.Drawing.Point(138, 457);
+            this.lblCopyTip.Name = "lblCopyTip";
+            this.lblCopyTip.Size = new System.Drawing.Size(415, 16);
+            this.lblCopyTip.TabIndex = 38;
+            this.lblCopyTip.Text = "The result is displayed as plain text to make it easier to copy and reuse if need" +
     "ed.";
+            this.lblCopyTip.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblCopyTip.Visible = false;
+            // 
+            // myBackgroundWorker
+            // 
+            this.myBackgroundWorker.WorkerReportsProgress = true;
+            this.myBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.myBackgroundWorker_DoWork);
+            this.myBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.myBackgroundWorker_ProgressChanged);
+            this.myBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.myBackgroundWorker_RunWorkerCompleted);
+            // 
+            // lblFeedback
+            // 
+            this.lblFeedback.Location = new System.Drawing.Point(138, 272);
+            this.lblFeedback.Name = "lblFeedback";
+            this.lblFeedback.Size = new System.Drawing.Size(415, 16);
+            this.lblFeedback.TabIndex = 39;
+            this.lblFeedback.Text = "The result is displayed as plain text to make it easier to copy and reuse if need" +
+    "ed.";
+            this.lblFeedback.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblFeedback.Visible = false;
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(594, 482);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.lblFeedback);
+            this.Controls.Add(this.lblCopyTip);
+            this.Controls.Add(this.lblInstructions);
+            this.Controls.Add(this.myProgressBar);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.txtSkipPatterns);
@@ -257,7 +280,6 @@
             this.Controls.Add(this.txtSqlExtensions);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.txtClientCodeExtensions);
-            this.Controls.Add(this.txtInstructions);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnCalculate);
             this.Controls.Add(this.txtLayoutExtensions);
@@ -286,7 +308,6 @@
         private System.Windows.Forms.TextBox txtLayoutExtensions;
         private System.Windows.Forms.Button btnCalculate;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtInstructions;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.TextBox txtClientCodeExtensions;
 		private System.Windows.Forms.Label label12;
@@ -296,7 +317,11 @@
 		private System.Windows.Forms.TextBox txtSqlExtensions;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.TextBox txtResult;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.ProgressBar myProgressBar;
+        private System.Windows.Forms.Label lblInstructions;
+        private System.Windows.Forms.Label lblCopyTip;
+        private System.ComponentModel.BackgroundWorker myBackgroundWorker;
+        private System.Windows.Forms.Label lblFeedback;
     }
 }
 
