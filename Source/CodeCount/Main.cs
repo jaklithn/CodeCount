@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,8 +13,6 @@ namespace CodeCount
 {
     public partial class Main : Form
     {
-        const string ExtensionSeparators = " ,;|";
-
         public Main()
         {
             InitializeComponent();
@@ -53,22 +52,32 @@ namespace CodeCount
                 Application.DoEvents();
                 SaveSettings();
 
+                // Set counters
+                var countItems = new Dictionary<string, CountItem>
+                {
+                    {"Code", new CountItem( Settings.Default.CodeExtensions)},
+                    {"ClientCode", new CountItem( Settings.Default.ClientCodeExtensions)},
+                    {"SQL", new CountItem(Settings.Default.SqlExtensions)},
+                    {"Layout", new CountItem(Settings.Default.LayoutExtensions)}
+                };
+                var skipPatterns = Settings.Default.SkipPatterns.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                var commentIndicators = Settings.Default.CommentIndicators.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-                var codeCount = CountFiles(Settings.Default.CodeExtensions);
-                var clientCodeCount = CountFiles(Settings.Default.ClientCodeExtensions);
-                var sqlCount = CountFiles(Settings.Default.SqlExtensions);
-                var layoutCount = CountFiles(Settings.Default.LayoutExtensions);
+                // Calculate
+                countItems = CountFiles(countItems, skipPatterns, commentIndicators);
 
-                var countTotal = Convert.ToDouble(codeCount.Total + clientCodeCount.Total + sqlCount.Total + layoutCount.Total);
-                var commentTotal = codeCount.Comment + clientCodeCount.Comment + sqlCount.Comment + layoutCount.Comment;
+                // Retrieve totals
+                var countTotal = Convert.ToDouble(countItems.Values.Sum(x => x.Total));
+                var commentTotal = Convert.ToDouble(countItems.Values.Sum(x => x.CommentCount));
 
+                // Display result
                 var sb = new StringBuilder();
                 sb.AppendLine("{0,-40}({1})", Settings.Default.BaseDirectory.Split(@"\".ToCharArray()).Last(), DateTime.Now.ToShortDateString());
                 sb.AppendLine("====================================================");
-                sb.AppendLine("Code        {0,10:N0}{1,10:P0}", codeCount.Code, codeCount.Code / countTotal);
-                sb.AppendLine("Client code {0,10:N0}{1,10:P0}", clientCodeCount.Code, clientCodeCount.Code / countTotal);
-                sb.AppendLine("SQL         {0,10:N0}{1,10:P0}", sqlCount.Code, sqlCount.Code / countTotal);
-                sb.AppendLine("Layout      {0,10:N0}{1,10:P0}", layoutCount.Code, layoutCount.Code / countTotal);
+                sb.AppendLine("Code        {0,10:N0}{1,10:P0}", countItems["Code"].CodeCount, countItems["Code"].CodeCount / countTotal);
+                sb.AppendLine("Client code {0,10:N0}{1,10:P0}", countItems["ClientCode"].CodeCount, countItems["ClientCode"].CodeCount / countTotal);
+                sb.AppendLine("SQL         {0,10:N0}{1,10:P0}", countItems["SQL"].CodeCount, countItems["SQL"].CodeCount / countTotal);
+                sb.AppendLine("Layout      {0,10:N0}{1,10:P0}", countItems["Layout"].CodeCount, countItems["Layout"].CodeCount / countTotal);
                 sb.AppendLine("Comment     {0,10:N0}{1,10:P0}", commentTotal, commentTotal / countTotal);
                 sb.AppendLine("====================================================");
                 sb.AppendLine("TOTALT      {0,10:N0}{1,10:P0}", countTotal, 1D);
@@ -109,41 +118,44 @@ namespace CodeCount
             Settings.Default.Save();
         }
 
-        private static CountResult CountFiles(string extensionString)
+        private static Dictionary<string, CountItem> CountFiles(Dictionary<string, CountItem> countItems, string[] skipPatterns, string[] commentIndicators)
         {
-            var extensions = extensionString.Split(ExtensionSeparators.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            var skipPatterns = Settings.Default.SkipPatterns.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            var commentIndicators = Settings.Default.CommentIndicators.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-            var countResult = new CountResult();
-            foreach (var extension in extensions)
+            var allHandledExtensions = countItems.Values.SelectMany(x => x.Extensions).ToList();
+            var directoryInfo = new DirectoryInfo(Settings.Default.BaseDirectory);
+            var fileInfos = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
+            foreach (var fileInfo in fileInfos)
             {
-                var files = Directory.GetFiles(Settings.Default.BaseDirectory, "*." + extension, SearchOption.AllDirectories);
-                foreach (var file in files)
+                // Skip if path matches any pattern we want to avoid
+                if (skipPatterns.Any(s => fileInfo.FullName.Contains(s)))
                 {
-                    if (skipPatterns.Any(s => file.Contains(s)))
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    foreach (var line in File.ReadAllLines(file))
+                // Skip if none of the handled extensions match
+                if (!allHandledExtensions.Contains(fileInfo.Extension))
+                {
+                    continue;
+                }
+
+                // Calculate file content and store on appropriate item
+                var countItem = countItems.Single(x => x.Value.Extensions.Contains(fileInfo.Extension));
+                foreach (var line in File.ReadAllLines(fileInfo.FullName))
+                {
+                    if (line.IsNullOrEmpty())
                     {
-                        if (line.IsNullOrEmpty())
-                        {
-                        }
-                        else if (commentIndicators.Any(c => line.Trim().StartsWith(c)))
-                        {
-                            countResult.Comment += 1;
-                        }
-                        else
-                        {
-                            countResult.Code += 1;
-                        }
+                    }
+                    else if (commentIndicators.Any(c => line.Trim().StartsWith(c)))
+                    {
+                        countItem.Value.CommentCount += 1;
+                    }
+                    else
+                    {
+                        countItem.Value.CodeCount += 1;
                     }
                 }
             }
 
-            return countResult;
+            return countItems;
         }
 
 

@@ -71,7 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\CountResult.cs" />
+    <Compile Include="Entities\CountItem.cs" />
     <Compile Include="Extenders\StringBuilderExtender.cs" />
     <Compile Include="Extenders\StringExtender.cs" />
     <Compile Include="Main.cs">

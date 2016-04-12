@@ -46,6 +46,7 @@
             this.txtSqlExtensions = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.txtResult = new System.Windows.Forms.TextBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnDirectory
@@ -222,15 +223,31 @@
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResult.Size = new System.Drawing.Size(412, 175);
+            this.txtResult.Size = new System.Drawing.Size(412, 158);
             this.txtResult.TabIndex = 33;
             this.txtResult.WordWrap = false;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Location = new System.Drawing.Point(141, 460);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(412, 20);
+            this.textBox1.TabIndex = 34;
+            this.textBox1.TabStop = false;
+            this.textBox1.Text = "The result is displayed as plain text to make it easier to copy and reuse if need" +
+    "ed.";
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(594, 497);
+            this.ClientSize = new System.Drawing.Size(594, 482);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.txtSkipPatterns);
@@ -279,6 +296,7 @@
 		private System.Windows.Forms.TextBox txtSqlExtensions;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.TextBox txtResult;
-	}
+        private System.Windows.Forms.TextBox textBox1;
+    }
 }
 
